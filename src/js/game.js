@@ -1,22 +1,33 @@
 import '../css/style.css'
-import { Actor, Engine, Vector } from "excalibur"
+import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
+import { Player } from './Player'
+import idleImageSrc from '../images/120x80_PNGSheets/_idle.png'
 
-export class Game extends Engine {
+// const game = new ex.Engine({
+//     width: 600,
+//     height: 400
+// });
 
+// game.start(ResourceLoader).then(() => {
+//     let player = new Player(game.halfCanvasWidth, game.halfCanvasHeight)
+//     this.add(player)
+// })
+
+export class Game extends ex.Engine {
     constructor() {
-        super({ width: 800, height: 600 })
-        this.start(ResourceLoader).then(() => this.startGame())
+      super();
+      // this.showDebug(true)
+      ex.Physics.acc = new ex.vec(0, 800)
+      this.start(ResourceLoader).then(() => this.startGame());
     }
-
+  
     startGame() {
-        console.log("start de game!")
-        const fish = new Actor()
-        fish.graphics.use(Resources.Fish.toSprite())
-        fish.pos = new Vector(400, 300)
-        fish.vel = new Vector(-10,0)
-        this.add(fish)
+        Resources.tiledMap.addTiledMapToScene(this.currentScene)
+        let player = new Player(10, 0)
+        this.currentScene.camera.strategy.lockToActor(player)
+        this.add(player)
     }
-}
-
-new Game()
+  }
+  
+  new Game();
