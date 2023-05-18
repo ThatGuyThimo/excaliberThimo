@@ -8,9 +8,11 @@ export class Player extends ex.Actor {
     onGround = true
     jumped = false
     transition
+    attackTransition
     playerAnimations = []
     attacking = 0
     clicked = 0
+    sfxVol = 0.2
   
      constructor(x, y) {
         super({ 
@@ -68,7 +70,7 @@ export class Player extends ex.Actor {
             image: Resources.playerjumptofall,
             grid: {
                 rows: 1,
-                columns: 3,
+                columns: 2,
                 spriteWidth: 120,
                 spriteHeight: 80
             }
@@ -98,14 +100,14 @@ export class Player extends ex.Actor {
         this.playerAnimations['runAnim'] = ex.Animation.fromSpriteSheet(runSheet, ex.range(0, 9), 50);
         this.playerAnimations['jumpAnim'] = ex.Animation.fromSpriteSheet(jumpSheet, ex.range(0, 2), 50);
         this.playerAnimations['fallAnim'] = ex.Animation.fromSpriteSheet(fallSheet, ex.range(0, 2), 50);
-        this.playerAnimations['jumpToFallAnim'] = ex.Animation.fromSpriteSheet(jumpToFallSheet, ex.range(0, 1), 50);
+        this.playerAnimations['jumpToFallAnim'] = ex.Animation.fromSpriteSheet(jumpToFallSheet, ex.range(0, 1), 200);
         this.playerAnimations['attackAnim1'] = ex.Animation.fromSpriteSheet(attackAnim1, ex.range(0, 3), 100);
         this.playerAnimations['attackAnim2'] = ex.Animation.fromSpriteSheet(attackAnim2, ex.range(0, 5), 100);
 
     }
 
     update(engine) {
-
+        // console.log(this.animPlaying)
         if(this.vel.y == 0) {
             this.onGround = true
             this.jumped = false
@@ -223,6 +225,19 @@ export class Player extends ex.Actor {
                 this.graphics.use(this.playerAnimations['idleAnim'])
             }
         }
+        if(this.attacking != 0) {
+            // console.log(this.attackTransition.currentFrameIndex)
+            console.log(this.attacking, " att")
+            if(this.attackTransition.currentFrameIndex == 3 && this.attacking == 1) {
+                this.attacking = 0       
+            }
+            if(this.attackTransition.currentFrameIndex == 5 && this.attacking >= 2) {
+                this.attacking = 0
+            }
+        }
+        if (this.attacking > 2) {
+            this.attacking = 0
+        }
 
         if(engine.input.keyboard.isHeld(ex.Input.Keys.D) || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && this.attacking == 0) {
             this.movePlayer("D")
@@ -247,19 +262,23 @@ export class Player extends ex.Actor {
             
     }
     movePlayer(key) {
-        switch(key){
-            case  "D":
-                this.vel.x = 150
-                break;
-            case "A":
-                this.vel.x = -150
-                break;
-            default:
-
+        if (this.attacking == 0) {
+            switch(key){
+                case  "D":
+                    this.vel.x = 150
+                    break;
+                case "A":
+                    this.vel.x = -150
+                    break;
+                default:
+    
+            }
         }
     }
     jump() {
         this.vel.y = -300
+        let sound = Resources.jumpingsounds[ex.randomIntInRange(0, 2)] 
+        sound.play(this.sfxVol)
     }
     attack(value) {
         console.log(value)
@@ -274,7 +293,11 @@ export class Player extends ex.Actor {
                         this.playerAnimations['attackAnim1'].flipHorizontal = true
                         break;
                 }
-                this.graphics.use(this.playerAnimations['attackAnim1'])
+                this.attackTransition = this.playerAnimations['attackAnim1']
+                this.attackTransition.reset()
+                this.graphics.use(this.attackTransition)
+                let sound = Resources.attack1sounds[ex.randomIntInRange(0, 2)] 
+                sound.play(this.sfxVol)
             }
         } else if (value == 2) {
             if (this.animPlaying != 11) {
@@ -287,9 +310,13 @@ export class Player extends ex.Actor {
                         this.playerAnimations['attackAnim2'].flipHorizontal = true
                         break;
                 }
-                this.graphics.use(this.playerAnimations['attackAnim2'])
+                this.attackTransition = this.playerAnimations['attackAnim2']
+                this.attackTransition.reset()
+                this.graphics.use(this.attackTransition)
+                let sound = Resources.attack2sounds[ex.randomIntInRange(0, 2)] 
+                sound.play(this.sfxVol)
             }
-            this.attacking = 0
+
         }
         // this.attacking = 0
     }
