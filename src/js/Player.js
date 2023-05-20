@@ -11,7 +11,6 @@ export class Player extends ex.Actor {
     attackTransition
     playerAnimations = []
     attacking = 0
-    clicked = 0
     sfxVol = 0.2
   
      constructor(x, y) {
@@ -21,7 +20,6 @@ export class Player extends ex.Actor {
             collisionType: ex.CollisionType.Active, 
             collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(-5, 20))
         })
-        // super({ x: 0, y: 0 })
     }
 
     onInitialize(engine) {
@@ -256,7 +254,6 @@ export class Player extends ex.Actor {
         if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) ){
             this.attacking += 1
             console.log(this.attacking)
-            // console.log('clicked')
             this.attack(this.attacking)
         }
             
