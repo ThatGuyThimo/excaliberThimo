@@ -2,6 +2,8 @@ import '../css/style.css'
 import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { Player } from './Player'
+import { Testmap } from './Testmap'
+import { Mainmenu } from './Mainmenu'
 
 export class Game extends ex.Engine {
     constructor() {
@@ -17,12 +19,9 @@ export class Game extends ex.Engine {
     }
   
     startGame() {
-        Resources.tiledMap.addTiledMapToScene(this.currentScene)
-        let player = new Player(10, 0)
-        this.currentScene.camera.strategy.lockToActor(player)
-        this.add(player)
-        Resources.trackoverworld1.loop = true
-        Resources.trackoverworld1.play(0.1)
+      this.add('testmap', new Testmap())
+      this.add('mainmenu', new Mainmenu())
+      this.goToScene('mainmenu')
     }
   }
   
