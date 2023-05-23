@@ -1,11 +1,16 @@
 import '../css/style.css'
 import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
-import { Player } from './Player'
 import { Testmap } from './Testmap'
 import { Mainmenu } from './Mainmenu'
+import { Settings } from './Settings'
 
 export class Game extends ex.Engine {
+
+  settings
+  testmap
+  mainmenu
+
     constructor() {
       super({
         width: 854,
@@ -19,9 +24,21 @@ export class Game extends ex.Engine {
     }
   
     startGame() {
-      this.add('testmap', new Testmap())
-      this.add('mainmenu', new Mainmenu())
+
+      this.settings = new Settings()
+      this.testmap = new Testmap()
+      this.mainmenu = new Mainmenu()
+
+      this.add('testmap', this.testmap)
+      this.add('mainmenu', this.mainmenu)
+      this.add('settings', this.settings)
       this.goToScene('mainmenu')
+    }
+
+    onPreUpdate(Engine) {
+      let volume = this.settings.getSettings()
+      // console.log(volume)
+      this.testmap.setVolume(volume['SFXVolume'], volume['MuisicVolume'])
     }
   }
   

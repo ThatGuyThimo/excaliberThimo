@@ -27,6 +27,7 @@ export class Button extends ex.ScreenElement {
     
     this.graphics.show('idle')
     this.graphics.show(text)
+    // this.addChild(text)
     this.on('pointerup', () => {
       this.clicked = true
     })
@@ -51,5 +52,8 @@ export class Button extends ex.ScreenElement {
   }
   isClicked() {
     return this.clicked
+  }
+  setClicked() {
+    this.clicked = false
   }
 }

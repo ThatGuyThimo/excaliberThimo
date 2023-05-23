@@ -9,7 +9,7 @@ export class Player extends ex.Actor {
     health = 3
     animPlaying = 0
     attacking = 0
-    sfxVol = 0.2
+    SFXVolume = 0.2
     facing = "R"
     playerAnimations = []
     transition
@@ -167,7 +167,7 @@ export class Player extends ex.Actor {
         if(this.vel.y == 0) {
             if(this.onGround == false) {
                 let sound = Resources.landingsounds[ex.randomIntInRange(0, 2)] 
-                sound.play(this.sfxVol)
+                sound.play(this.SFXVolume)
             }
             this.onGround = true
             this.jumped = false
@@ -437,12 +437,12 @@ export class Player extends ex.Actor {
         this.transition.reset()
         this.vel.y = -300
         let sound = Resources.jumpingsounds[ex.randomIntInRange(0, 2)] 
-        sound.play(this.sfxVol)
+        sound.play(this.SFXVolume)
     }
     crouch() {
         if (!this.crouching) {
             let sound = Resources.crouchingsounds[ex.randomIntInRange(0, 2)]
-            sound.play(this.sfxVol)
+            sound.play(this.SFXVolume)
         }
     }
     attack(value) {
@@ -468,7 +468,7 @@ export class Player extends ex.Actor {
                 }
                 this.graphics.use(this.attackTransition)
                 let sound = Resources.attack1sounds[ex.randomIntInRange(0, 2)] 
-                sound.play(this.sfxVol)
+                sound.play(this.SFXVolume)
             }
         } else if (value == 2) {
             if (this.animPlaying != 11) {
@@ -486,7 +486,7 @@ export class Player extends ex.Actor {
                     this.attackTransition.reset()
                     this.graphics.use(this.attackTransition)
                     let sound = Resources.attack2sounds[ex.randomIntInRange(0, 2)] 
-                    sound.play(this.sfxVol)
+                    sound.play(this.SFXVolume)
                 }
             }
         }
@@ -521,11 +521,14 @@ export class Player extends ex.Actor {
             this.graphics.use(this.playerAnimations['playerHit'])
             this.health -= ammount
             let sound = Resources.playerhitsounds[ex.randomIntInRange(0, 3)] 
-            sound.play(this.sfxVol)
+            sound.play(this.SFXVolume)
             setTimeout(() => {
                 this.hit = false
                 this.graphics.use(this.playerAnimations['idleAnim'])
             }, 800)
         }
+    }
+    setSFXVolume(value) {
+        this.SFXVolume = value
     }
 }

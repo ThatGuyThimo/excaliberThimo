@@ -1,6 +1,7 @@
 import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { Button } from './Button.js'
+import { Settings } from "./Settings.js"
 
 export class Mainmenu extends ex.Scene {
     startButton
@@ -38,10 +39,12 @@ export class Mainmenu extends ex.Scene {
 
     onPreUpdate(Engine) {
         if(this.startButton.isClicked()) {
+            this.startButton.setClicked()
             Engine.goToScene('testmap')
         }
         if(this.settingsButton.isClicked()) {
-
+            this.settingsButton.setClicked()
+            Engine.goToScene('settings')
         }
     }
 }
