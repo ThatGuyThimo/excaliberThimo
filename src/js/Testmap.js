@@ -12,10 +12,16 @@ export class Testmap extends ex.Scene {
     enemy
     enemyGroup = ex.CollisionGroupManager.create('enemyGroup')
     playerGroup = ex.CollisionGroupManager.create('player')
-    muisicVolume = 0.5
-    SFXVolume = 0.5
+    muisicVolume = 0.1
+    DataClass
+
+    constructor(Dataclass){
+        super({})
+        this.DataClass = Dataclass
+    }
 
     onInitialize(Engine) {
+        this.DataClass.setScene('testmap')
 
         const enemiesCanCollideWith = ex.CollisionGroup.collidesWith([
             this.playerGroup, // collide with players
@@ -39,15 +45,13 @@ export class Testmap extends ex.Scene {
           })
 
         Resources.tiledMap.addTiledMapToScene(this)
-        this.player = new Player(20, 200, playersCanCollideWith)
+        this.player = new Player(20, 200, this.DataClass, playersCanCollideWith)
         this.enemy = new Enemy(900, -30, enemiesCanCollideWith)
         this.camera.strategy.lockToActor(this.player)
         this.add(leftWallCollider)
         this.add(rightWallCollider)
         this.add(this.player)
         this.add(this.enemy)
-
-        this.player.setSFXVolume(this.SFXVolume)
 
         if(this.muisicVolume != 0) {
             this.trackplaying = Resources.trackoverworldinit
@@ -59,7 +63,15 @@ export class Testmap extends ex.Scene {
         }
     }
 
+    onActivate() {
+        this.muisicVolume = this.DataClass.getMuisicvolume()
+        if(this.DataClass.getRestart()) {
+            this.player.reset()
+        }
+    }
+
     onPreUpdate(Engine) {
+        this.trackplaying.volume = this.muisicVolume
         if(this.muisicVolume != 0) {
             if (this.player.getHealth() <= 0 && this.dead == false) {
                 this.trackplaying.stop()
@@ -77,9 +89,4 @@ export class Testmap extends ex.Scene {
             }
         }
     }
-
-    setVolume(SFX, muisic) {
-        this.muisicVolume = muisic
-        this.SFXVolume = SFX
-    } 
 }

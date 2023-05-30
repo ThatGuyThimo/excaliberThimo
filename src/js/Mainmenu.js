@@ -1,13 +1,20 @@
 import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { Button } from './Button.js'
-import { Settings } from "./Settings.js"
 
 export class Mainmenu extends ex.Scene {
     startButton
     settingsButton
+    DataClass
+
+    constructor(Dataclass){
+        super({})
+        this.DataClass = Dataclass
+    }
 
     onInitialize(Engine) {
+
+        this.DataClass.setScene('mainmenu')
 
         let uiButtonsSpriteSheet = ex.SpriteSheet.fromImageSource({
             image: Resources.uibuttons,

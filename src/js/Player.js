@@ -9,13 +9,14 @@ export class Player extends ex.Actor {
     health = 3
     animPlaying = 0
     attacking = 0
-    SFXVolume = 0.2
+    SFXVolume = localStorage.getItem('SFXvolume')
     facing = "R"
     playerAnimations = []
     transition
     attackTransition
+    DataClass
   
-     constructor(x, y, collisionGroup) {
+     constructor(x, y, Dataclass, collisionGroup) {
         super({ 
             x: x,
             y: y,
@@ -24,6 +25,7 @@ export class Player extends ex.Actor {
             // collisionGroup: collisionGroup,
             collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(0, 20))
         })
+        this.DataClass = Dataclass
     }
 
     onInitialize(engine) {
@@ -144,11 +146,11 @@ export class Player extends ex.Actor {
         this.playerAnimations['attackAnim1'] = ex.Animation.fromSpriteSheet(attackAnim1, ex.range(0, 3), 100);
         this.playerAnimations['attackAnim2'] = ex.Animation.fromSpriteSheet(attackAnim2, ex.range(0, 5), 100);
         this.playerAnimations['crouching'] = crouching;
-        this.playerAnimations['crouchTarnsition'] = crouchTarnsition
+        this.playerAnimations['crouchTarnsition'] = crouchTarnsition;
         this.playerAnimations['crouchWalking'] = ex.Animation.fromSpriteSheet(crouchWalking, ex.range(0, 5), 50);
         this.playerAnimations['crouchAttack'] = ex.Animation.fromSpriteSheet(crouchAttack, ex.range(0, 3), 100);
         this.playerAnimations['deathAnim'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(0, 9), 100, ex.AnimationStrategy.Freeze);
-        this.playerAnimations['playerHit'] = hitAnim
+        this.playerAnimations['playerHit'] = hitAnim;
 
         this.on('collisionstart', (event) => {
             if (event.other._name == "enemy" && !this.hit) {
@@ -164,6 +166,7 @@ export class Player extends ex.Actor {
         // console.log(this.facing)
         // console.log(this.onGround)
         // console.log(this.vel.y)
+        this.SFXVolume = localStorage.getItem('SFXvolume')
         if(this.vel.y == 0) {
             if(this.onGround == false) {
                 let sound = Resources.landingsounds[ex.randomIntInRange(0, 2)] 
@@ -365,9 +368,11 @@ export class Player extends ex.Actor {
         } else if(this.attacking != 0) {
             this.vel.x = 0
             if(this.attackTransition.currentFrameIndex == 3 && this.attacking == 1 && !this.crouching) {
-                this.attacking = 0       
+                this.addComponent( new ex.TagComponent('attacking1'));   
+                this.attacking = 0    
             }
             if(this.attackTransition.currentFrameIndex == 5 && this.attacking >= 2 && !this.crouching) {
+                this.addComponent( new ex.TagComponent('attacking2'));
                 this.attacking = 0
             }
             if (this.crouching && this.attackTransition.currentFrameIndex == 3) {
@@ -400,6 +405,9 @@ export class Player extends ex.Actor {
         if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) && !this.hit && this.health > 0 ){
             this.attacking += 1
             this.attack(this.attacking)
+        }
+        if (engine.input.keyboard.wasPressed(ex.Input.Keys.Escape)){
+            engine.goToScene('pausescreen')
         }
             
     }
@@ -527,8 +535,5 @@ export class Player extends ex.Actor {
                 this.graphics.use(this.playerAnimations['idleAnim'])
             }, 800)
         }
-    }
-    setSFXVolume(value) {
-        this.SFXVolume = value
     }
 }
