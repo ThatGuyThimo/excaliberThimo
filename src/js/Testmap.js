@@ -14,6 +14,8 @@ export class Testmap extends ex.Scene {
     playerGroup = ex.CollisionGroupManager.create('player')
     muisicVolume = 0.1
     DataClass
+    leftWallCollider
+    rightWallCollider
 
     constructor(Dataclass){
         super({})
@@ -23,35 +25,9 @@ export class Testmap extends ex.Scene {
     onInitialize(Engine) {
         this.DataClass.setScene('testmap')
 
-        const enemiesCanCollideWith = ex.CollisionGroup.collidesWith([
-            this.playerGroup, // collide with players
-        ])
-        const playersCanCollideWith = ex.CollisionGroup.collidesWith([
-            this.playerGroup, // collide with other players
-            this.enemyGroup, // collide with enemies
-        ])
-
-        let leftWallCollider = new ex.Actor({
-            pos: ex.vec(-1, 200),
-            width: 10,
-            height: 300,
-            collisionType: ex.CollisionType.Fixed
-          })
-        let rightWallCollider = new ex.Actor({
-            pos: ex.vec(1520, 200),
-            width: 10,
-            height: 300,
-            collisionType: ex.CollisionType.Fixed
-          })
-
         Resources.tiledMap.addTiledMapToScene(this)
-        this.player = new Player(20, 200, this.DataClass, playersCanCollideWith)
-        this.enemy = new Enemy(900, -30, enemiesCanCollideWith)
-        this.camera.strategy.lockToActor(this.player)
-        this.add(leftWallCollider)
-        this.add(rightWallCollider)
-        this.add(this.player)
-        this.add(this.enemy)
+
+        this.initializeActors()
 
         if(this.muisicVolume != 0) {
             this.trackplaying = Resources.trackoverworldinit
@@ -63,10 +39,50 @@ export class Testmap extends ex.Scene {
         }
     }
 
+    initializeActors() {
+        if(this.DataClass.getRestart()) {
+            this.DataClass.setRestart(false)
+            this.player.kill()
+            this.enemy.kill()
+            this.leftWallCollider.kill()
+            this.rightWallCollider.kill()
+        }
+
+        const enemiesCanCollideWith = ex.CollisionGroup.collidesWith([
+            this.playerGroup, // collide with players
+        ])
+        const playersCanCollideWith = ex.CollisionGroup.collidesWith([
+            this.playerGroup, // collide with other players
+            this.enemyGroup, // collide with enemies
+        ])
+
+        this.leftWallCollider = new ex.Actor({
+            pos: ex.vec(-1, 200),
+            width: 10,
+            height: 300,
+            collisionType: ex.CollisionType.Fixed
+          })
+        this.rightWallCollider = new ex.Actor({
+            pos: ex.vec(1520, 200),
+            width: 10,
+            height: 300,
+            collisionType: ex.CollisionType.Fixed
+          })
+
+        this.player = new Player(20, 200, this.DataClass, playersCanCollideWith)
+        this.enemy = new Enemy(900, -30, enemiesCanCollideWith)
+        this.camera.strategy.lockToActor(this.player)
+
+        this.add(this.leftWallCollider)
+        this.add(this.rightWallCollider)
+        this.add(this.player)
+        this.add(this.enemy)
+    }
+
     onActivate() {
         this.muisicVolume = this.DataClass.getMuisicvolume()
         if(this.DataClass.getRestart()) {
-            this.player.reset()
+            this.initializeActors()
         }
     }
 
