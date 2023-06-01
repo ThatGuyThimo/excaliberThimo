@@ -2,6 +2,7 @@ import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { Player } from './Player.js'
 import { Enemy } from "./Enemy.js"
+import { BackgroundClass } from "./Background.js"
 
 export class Testmap extends ex.Scene {
 
@@ -26,6 +27,8 @@ export class Testmap extends ex.Scene {
         this.DataClass.setScene('testmap')
 
         Resources.tiledMap.addTiledMapToScene(this)
+
+        this.initializeBackground(Engine)
 
         this.initializeActors()
 
@@ -72,11 +75,32 @@ export class Testmap extends ex.Scene {
         this.player = new Player(20, 200, this.DataClass, playersCanCollideWith)
         this.enemy = new Enemy(900, -30, enemiesCanCollideWith)
         this.camera.strategy.lockToActor(this.player)
+        // this.camera.strategy.radiusAroundActor(this.Player, 100)
+
+        let boundingBox = new ex.BoundingBox(
+            0,
+            -2000,
+            1520,
+            320
+          )
+
+        this.camera.strategy.limitCameraBounds(boundingBox)
+
 
         this.add(this.leftWallCollider)
         this.add(this.rightWallCollider)
         this.add(this.player)
         this.add(this.enemy)
+    }
+
+    initializeBackground(Engine) {
+        let BG1 = new BackgroundClass(-2, -400, -300, 4, 0.8, Resources.background[0], this.DataClass)
+        let BG2 = new BackgroundClass(-3, -400, -300, 4, 0.6, Resources.background[1], this.DataClass)
+        let BG3 = new BackgroundClass(-4, -400, -300, 4, 0.4, Resources.background[2], this.DataClass)
+
+        this.add(BG1)
+        this.add(BG2)
+        this.add(BG3)
     }
 
     onActivate() {

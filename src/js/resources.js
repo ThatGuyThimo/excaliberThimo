@@ -14,6 +14,9 @@ import jumptofallImageSrc from '../images/120x80_PNGSheets/_JumpFallInbetween.pn
 import attack1ImageSrc from '../images/120x80_PNGSheets/_Attack.png'
 import attack2ImageSrc from '../images/120x80_PNGSheets/_Attack2.png'
 import deathImageSrc from '../images/120x80_PNGSheets/_Death.png'
+import bgNightTownFrontImageSrc from '../images/Backgrounds/PNG/Night-Town/front.png'
+import bgNightTownMiddleImageSrc from '../images/Backgrounds/PNG/Night-Town/middle.png'
+import bgNightTownBackImageSrc from '../images/Backgrounds/PNG/Night-Town/back.png'
 import overworld1AudioSrc from '../sounds/tracks/02_1_titles_LOOP.mp3'
 import overworldInitAudioSrc from '../sounds/tracks/titles_INITIAL.mp3'
 import gameoverAudioSrc from '../sounds/tracks/game_over_INITIAL.mp3'
@@ -53,6 +56,7 @@ const Resources = {
     trackoverworld1: new Sound(overworld1AudioSrc),
     trackgameover: new Sound(gameoverAudioSrc),
     trackgameoverloop: new Sound(gameoverLoopAudioSrc),
+    background: [new ImageSource(bgNightTownFrontImageSrc), new ImageSource(bgNightTownMiddleImageSrc), new ImageSource(bgNightTownBackImageSrc)],
     attack1sounds: [new Sound(attack1_1AudioSrc), new Sound(attack1_2AudioSrc), new Sound(attack1_3AudioSrc)],
     attack2sounds: [new Sound(attack2_1AudioSrc), new Sound(attack2_2AudioSrc), new Sound(attack2_3AudioSrc)],
     jumpingsounds: [new Sound(jump_1AudioSrc), new Sound(jump_2AudioSrc), new Sound(jump_3AudioSrc)],
@@ -77,6 +81,9 @@ const ResourceLoader = new Loader([
         Resources.trackgameover,
         Resources.trackgameoverloop,
         Resources.playerhit,
+        Resources.background[0],
+        Resources.background[1],
+        Resources.background[2],
         Resources.playerhitsounds[0],
         Resources.playerhitsounds[1],
         Resources.playerhitsounds[2],

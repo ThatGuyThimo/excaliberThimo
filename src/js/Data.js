@@ -4,6 +4,7 @@ export class Data {
     Muisicvolume
     Scene
     restart = false
+    playerXpos
 
     setSFXvolume(value) {
         this.SFXvolume = parseFloat(value)
@@ -21,6 +22,10 @@ export class Data {
         this.restart = value
     }
 
+    setPlayerXpos(value) {
+        this.playerXpos = value
+    }
+
     getSFXvolume() {
         return this.SFXvolume
     }
@@ -35,5 +40,9 @@ export class Data {
 
     getRestart() {
         return this.restart
+    }
+
+    getPlayerXpos() {
+        return this.playerXpos
     }
 }

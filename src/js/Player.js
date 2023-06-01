@@ -166,6 +166,7 @@ export class Player extends ex.Actor {
         // console.log(this.facing)
         // console.log(this.onGround)
         // console.log(this.vel.y)
+        this.DataClass.setPlayerXpos(this.pos.x)
         this.SFXVolume = localStorage.getItem('SFXvolume')
         if(this.vel.y == 0) {
             if(this.onGround == false) {
