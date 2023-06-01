@@ -5,6 +5,8 @@ export class Data {
     Scene
     restart = false
     playerXpos
+    levels = ['testmap', 'level1', 'level2']
+    currentLevel = 0
 
     setSFXvolume(value) {
         this.SFXvolume = parseFloat(value)
@@ -44,5 +46,13 @@ export class Data {
 
     getPlayerXpos() {
         return this.playerXpos
+    }
+
+    getLevel(value) {
+        return this.levels[value]
+    }
+
+    getCurrentLevel() {
+        return this.currentLevel
     }
 }

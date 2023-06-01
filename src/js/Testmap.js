@@ -3,6 +3,7 @@ import { Resources, ResourceLoader } from './resources.js'
 import { Player } from './Player.js'
 import { Enemy } from "./Enemy.js"
 import { BackgroundClass } from "./Background.js"
+import { Sign } from "./Sign.js"
 
 export class Testmap extends ex.Scene {
 
@@ -11,6 +12,7 @@ export class Testmap extends ex.Scene {
     looping = false
     player
     enemy
+    sign
     enemyGroup = ex.CollisionGroupManager.create('enemyGroup')
     playerGroup = ex.CollisionGroupManager.create('player')
     muisicVolume = 0.1
@@ -25,6 +27,9 @@ export class Testmap extends ex.Scene {
 
     onInitialize(Engine) {
         this.DataClass.setScene('testmap')
+
+        let sign = new Sign(1500, 230, this.DataClass)
+        this.add(sign)
 
         Resources.tiledMap.addTiledMapToScene(this)
 
@@ -49,6 +54,7 @@ export class Testmap extends ex.Scene {
             this.enemy.kill()
             this.leftWallCollider.kill()
             this.rightWallCollider.kill()
+            this.sign.kill()
         }
 
         const enemiesCanCollideWith = ex.CollisionGroup.collidesWith([
@@ -73,7 +79,8 @@ export class Testmap extends ex.Scene {
           })
 
         this.player = new Player(20, 200, this.DataClass, playersCanCollideWith)
-        this.enemy = new Enemy(900, -30, enemiesCanCollideWith)
+        this.enemy = new Enemy(900, 200, enemiesCanCollideWith)
+        this.sign = new Sign(1500, 230, this.DataClass)
         this.camera.strategy.lockToActor(this.player)
         // this.camera.strategy.radiusAroundActor(this.Player, 100)
 
@@ -91,6 +98,7 @@ export class Testmap extends ex.Scene {
         this.add(this.rightWallCollider)
         this.add(this.player)
         this.add(this.enemy)
+        this.add(this.sign)
     }
 
     initializeBackground(Engine) {

@@ -15,6 +15,7 @@ export class Player extends ex.Actor {
     transition
     attackTransition
     DataClass
+    attackHitbox
   
      constructor(x, y, Dataclass, collisionGroup) {
         super({ 
@@ -29,7 +30,6 @@ export class Player extends ex.Actor {
     }
 
     onInitialize(engine) {
-
         // Create all the SpriteSheets
         let idleSheet = ex.SpriteSheet.fromImageSource({
             image: Resources.playeridle,
@@ -151,9 +151,18 @@ export class Player extends ex.Actor {
         this.playerAnimations['crouchAttack'] = ex.Animation.fromSpriteSheet(crouchAttack, ex.range(0, 3), 100);
         this.playerAnimations['deathAnim'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(0, 9), 100, ex.AnimationStrategy.Freeze);
         this.playerAnimations['playerHit'] = hitAnim;
+        this.attackHitbox = new ex.Actor({
+            x: 0,
+            y: 0,
+            name: 'attackbox',
+            collisionType: ex.CollisionType.Passive,
+            collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(0, 20))
+        })
+
+        this.addChild(this.attackHitbox)
 
         this.on('collisionstart', (event) => {
-            if (event.other._name == "enemy" && !this.hit) {
+            if (event.other._name == "enemy" && !this.hit && this.attacking == 0 && event.other._tagsMemo[0] != 'dead') {
                 this.takeDamage(1, event.contact.info.sideId)
                 this.hit = true
             }
@@ -188,18 +197,37 @@ export class Player extends ex.Actor {
         // Hitbox state machine
         switch(true) {
             case this.facing == "R" && !this.crouching:
+                if(this.attacking) {
+                    this.attackHitbox.collider.set(ex.Shape.Box(50, 40, ex.Vector.Half, ex.vec(25, 20)))
+                } else {
+                    this.attackHitbox.collider.set(ex.Shape.Box(1, 40, ex.Vector.Half, ex.vec(0, 20)))
+                }
                 this.collider.set(ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(-5, 20)))
                 break;
             case this.facing == "L" && !this.crouching:
+                if(this.attacking) {
+                    this.attackHitbox.collider.set(ex.Shape.Box(50, 40, ex.Vector.Half, ex.vec(-25, 20)))
+                } else {
+                    this.attackHitbox.collider.set(ex.Shape.Box(1, 40, ex.Vector.Half, ex.vec(0, 20)))
+                }
                 this.collider.set(ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(5, 20)))
                 break;
             case this.facing == "R" && this.crouching:
+                if(this.attacking) {
+                    this.attackHitbox.collider.set(ex.Shape.Box(50, 20, ex.Vector.Half, ex.vec(10,30)))
+                } else {
+                    this.attackHitbox.collider.set(ex.Shape.Box(1, 20, ex.Vector.Half, ex.vec(10,30)))
+                }
                 this.collider.set(ex.Shape.Box(20, 20, ex.Vector.Half, ex.vec(-5,30)))
                 break;
             case this.facing == "L" && this.crouching:
+                if (this.attacking) {
+                    this.attackHitbox.collider.set(ex.Shape.Box(50, 20, ex.Vector.Half, ex.vec(-10, 30)))
+                } else {
+                    this.attackHitbox.collider.set(ex.Shape.Box(1, 20, ex.Vector.Half, ex.vec(-10, 30)))
+                }
                 this.collider.set(ex.Shape.Box(20, 20, ex.Vector.Half, ex.vec(5, 30)))
                 break;
-
         }
 
         // Animation state machine
@@ -367,16 +395,19 @@ export class Player extends ex.Actor {
         if (this.attacking > 2) {
             this.attacking = 0
         } else if(this.attacking != 0) {
+            // console.log(this.tags)
             this.vel.x = 0
-            if(this.attackTransition.currentFrameIndex == 3 && this.attacking == 1 && !this.crouching) {
-                this.addComponent( new ex.TagComponent('attacking1'));   
+            if(this.attackTransition.currentFrameIndex == 3 && this.attacking == 1 && !this.crouching) { 
+                this.attackHitbox.removeTag('attacking1')
                 this.attacking = 0    
             }
             if(this.attackTransition.currentFrameIndex == 5 && this.attacking >= 2 && !this.crouching) {
-                this.addComponent( new ex.TagComponent('attacking2'));
+                this.attackHitbox.removeTag('attacking1')
+                this.attackHitbox.removeTag('attacking2')
                 this.attacking = 0
             }
             if (this.crouching && this.attackTransition.currentFrameIndex == 3) {
+                this.attackHitbox.removeTag('attacking1')
                 this.attacking = 0
             }
 
@@ -475,6 +506,8 @@ export class Player extends ex.Actor {
                     this.attackTransition = this.playerAnimations['crouchAttack']
                     this.attackTransition.reset()
                 }
+
+                this.attackHitbox.addTag('attacking1');  
                 this.graphics.use(this.attackTransition)
                 let sound = Resources.attack1sounds[ex.randomIntInRange(0, 2)] 
                 sound.play(this.SFXVolume)
@@ -491,6 +524,8 @@ export class Player extends ex.Actor {
                         break;
                 }
                 if (!this.crouching) {
+                    this.attackHitbox.removeTag('attacking1')
+                    this.attackHitbox.addTag('attacking2');  
                     this.attackTransition = this.playerAnimations['attackAnim2']
                     this.attackTransition.reset()
                     this.graphics.use(this.attackTransition)
