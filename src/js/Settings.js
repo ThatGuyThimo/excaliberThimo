@@ -79,6 +79,13 @@ export class Settings extends ex.Scene {
             this.SFXVolume = localStorage.getItem('SFXvolume')
             this.DataClass.setSFXvolume(this.SFXVolume)
             this.DataClass.setMuisicvolume(this.MuisicVolume)
+        } else {
+            this.MuisicVolume = 0.5
+            this.SFXVolume = 0.5
+            this.DataClass.setSFXvolume(this.SFXVolume)
+            this.DataClass.setMuisicvolume(this.MuisicVolume)
+            localStorage.setItem('SFXvolume', this.SFXVolume)
+            localStorage.setItem('Muisicvolume', this.MuisicVolume)
         }
         settings['SFXVolume'] = this.SFXVolume
         settings['MuisicVolume'] = this.MuisicVolume

@@ -26,6 +26,7 @@ export class Testmap extends ex.Scene {
     }
 
     onInitialize(Engine) {
+
         this.DataClass.setScene('testmap')
 
         let sign = new Sign(1500, 230, this.DataClass)
