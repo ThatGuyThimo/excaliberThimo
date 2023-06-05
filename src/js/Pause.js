@@ -16,6 +16,8 @@ export class PauseScreen extends ex.Scene {
     }
 
     onInitialize(Engine) {
+
+
         // this.lastScene = localStorage.getItem('Scene')
         this.lastScene = this.DataClass.getScene()
         this.DataClass.setScene('pausescreen')
@@ -65,6 +67,11 @@ export class PauseScreen extends ex.Scene {
         if (Engine.input.keyboard.wasPressed(ex.Input.Keys.Esc)){
             Engine.goToScene(this.lastScene)
         }
+        Engine.input.gamepads.at(0).on('button', (event) => {
+            if(event.button === ex.Input.Buttons.Select) {
+                Engine.goToScene(this.lastScene)
+            }
+        })
         if(this.settingsButton.isClicked()) {
             this.settingsButton.setClicked()
             Engine.goToScene('settings')

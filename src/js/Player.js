@@ -9,6 +9,7 @@ export class Player extends ex.Actor {
     health = 3
     animPlaying = 0
     attacking = 0
+    attacked = false
     SFXVolume = localStorage.getItem('SFXvolume')
     facing = "R"
     playerAnimations = []
@@ -16,17 +17,21 @@ export class Player extends ex.Actor {
     attackTransition
     DataClass
     attackHitbox
+    multiplayer = false
+    player
   
-     constructor(x, y, Dataclass, collisionGroup) {
+     constructor(x, y, Dataclass, multiplayer, player, collisionGroup) {
         super({ 
             x: x,
             y: y,
             name: 'player',
             collisionType: ex.CollisionType.Active,
-            // collisionGroup: collisionGroup,
+            collisionGroup: collisionGroup,
             collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(0, 20))
         })
         this.DataClass = Dataclass
+        this.multiplayer = multiplayer
+        this.player = player
     }
 
     onInitialize(engine) {
@@ -187,10 +192,10 @@ export class Player extends ex.Actor {
         } else {
             this.onGround = false
         }
-        if(this.onGround && !engine.input.keyboard.isHeld(ex.Input.Keys.D) && !engine.input.keyboard.isHeld(ex.Input.Keys.Right) && !engine.input.keyboard.isHeld(ex.Input.Keys.A) && !engine.input.keyboard.isHeld(ex.Input.Keys.Left)) {
+        if(this.onGround && !engine.input.keyboard.isHeld(ex.Input.Keys.D) && !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !engine.input.keyboard.isHeld(ex.Input.Keys.A) && !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft)) {
             this.vel.x = 0
         }
-        if(this.crouching && !engine.input.keyboard.isHeld(ex.Input.Keys.S) && !engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown)) {
+        if(this.crouching && !engine.input.keyboard.isHeld(ex.Input.Keys.S) && !engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown)) {
             this.crouching = false
         }
 
@@ -412,35 +417,61 @@ export class Player extends ex.Actor {
             }
 
         }
+        
 
         // Input logic
-        if(engine.input.keyboard.isHeld(ex.Input.Keys.D) && !this.hit && this.attacking == 0 && this.health > 0 || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && !this.hit && this.attacking == 0 && this.health > 0) {
+        if(engine.input.keyboard.isHeld(ex.Input.Keys.D) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !this.hit && this.attacking == 0 && this.health > 0) {
             this.movePlayer("D")
-
         }
-        if(engine.input.keyboard.isHeld(ex.Input.Keys.A) && !this.hit && this.attacking == 0 && this.health > 0 || engine.input.keyboard.isHeld(ex.Input.Keys.Left) && !this.hit && this.attacking == 0 && this.health > 0) {
+
+        if(engine.input.keyboard.isHeld(ex.Input.Keys.A) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Left) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && !this.hit && this.attacking == 0 && this.health > 0) {
             this.movePlayer("A")
         }  
 
-        if (engine.input.keyboard.wasPressed(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 || engine.input.keyboard.wasPressed(ex.Input.Keys.ArrowUp) && !this.hit && this.attacking == 0 && this.health > 0) {
-            if(this.onGround) {
+        if (engine.input.keyboard.wasPressed(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.wasPressed(ex.Input.Keys.ArrowUp) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 ) {
+            if(this.onGround && !this.jumped) {
                 this.jump()
                 this.jumped = true
             }
         }
-        if (engine.input.keyboard.isHeld(ex.Input.Keys.S) && !this.hit && this.attacking == 0 && this.health > 0 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && !this.hit && this.attacking == 0 && this.health > 0) {
+
+        if (engine.input.keyboard.isHeld(ex.Input.Keys.S) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && !this.hit && this.attacking == 0 && this.health > 0) {
             if(this.onGround) {
                 this.crouch()
                 this.crouching = true
             }
         }
-        if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) && !this.hit && this.health > 0 ){
+        if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) && !this.hit && this.health > 0 && this.player == 1 ){
             this.attacking += 1
             this.attack(this.attacking)
         }
-        if (engine.input.keyboard.wasPressed(ex.Input.Keys.Escape)){
+        if (engine.input.keyboard.wasPressed(ex.Input.Keys.Escape) && this.player == 1){
             engine.goToScene('pausescreen')
         }
+
+        //controller once input
+
+        engine.input.gamepads.at(0).on('button', (event) => {
+            if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0) {
+            if(this.onGround && !this.jumped) {
+                this.jump()
+                this.jumped = true
+            }
+            }
+            if (event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 1 && !this.multiplayer || event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 2 && this.multiplayer) {
+                if (!this.attacked) {
+                    this.attacked = true
+                    this.attacking += 1
+                    this.attack(this.attacking)
+                    setTimeout(() => {
+                        this.attacked = false
+                    }, 10)
+                }
+            }
+            if(event.button === ex.Input.Buttons.Select) {
+                engine.goToScene('pausescreen')
+            }
+        })
             
     }
 
@@ -537,6 +568,10 @@ export class Player extends ex.Actor {
     }
     getHealth() {
         return this.health
+    }
+    setPlayer(value, mp) {
+        this.player = value
+        this.multiplayer = mp
     }
     takeDamage(ammount, side) {
         if (this.health > 0) {

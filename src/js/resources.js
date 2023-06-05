@@ -6,6 +6,7 @@ import crouchWalkImageSrc from '../images/120x80_PNGSheets/_CrouchWalk.png'
 import crouchTransitionImageSrc from '../images/120x80_PNGSheets/_CrouchTransition.png'
 import crouchAttackImageSrc from '../images/120x80_PNGSheets/_CrouchAttack.png'
 import uiImageSrc from '../images/button_UI.png'
+import buttonsImageSrc from '../images/BaltKeys_light.png'
 import runImageSrc from '../images/120x80_PNGSheets/_Run.png'
 import jumpImageSrc from '../images/120x80_PNGSheets/_Jump.png'
 import damageImageSrc from '../images/120x80_PNGSheets/_Hit.png'
@@ -53,6 +54,7 @@ const Resources = {
     playerattack2: new ImageSource(attack2ImageSrc),
     playerdeath: new ImageSource(deathImageSrc),
     uibuttons: new ImageSource(uiImageSrc),
+    buttons: new ImageSource(buttonsImageSrc),
     sign: new ImageSource(signImageSrc),
     trackoverworldinit: new Sound(overworldInitAudioSrc),
     trackoverworld1: new Sound(overworld1AudioSrc),
@@ -84,6 +86,7 @@ const ResourceLoader = new Loader([
         Resources.trackgameoverloop,
         Resources.playerhit,
         Resources.sign,
+        Resources.buttons,
         Resources.background[0],
         Resources.background[1],
         Resources.background[2],

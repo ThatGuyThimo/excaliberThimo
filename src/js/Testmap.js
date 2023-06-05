@@ -4,6 +4,7 @@ import { Player } from './Player.js'
 import { Enemy } from "./Enemy.js"
 import { BackgroundClass } from "./Background.js"
 import { Sign } from "./Sign.js"
+import { ControllButtons } from "./ControllButtons.js"
 
 export class Testmap extends ex.Scene {
 
@@ -11,10 +12,14 @@ export class Testmap extends ex.Scene {
     trackplaying
     looping = false
     player
+    player2
+    p1Label
     enemy
     sign
     enemyGroup = ex.CollisionGroupManager.create('enemyGroup')
     playerGroup = ex.CollisionGroupManager.create('player')
+    playersCanCollideWith
+    multiplayer = false
     muisicVolume = 0.1
     DataClass
     leftWallCollider
@@ -27,12 +32,30 @@ export class Testmap extends ex.Scene {
 
     onInitialize(Engine) {
 
+        Engine.input.gamepads.setMinimumGamepadConfiguration({
+            axis: 4,
+            buttons: 8,
+          })
+
+        Engine.input.gamepads.enabled = true
+
         this.DataClass.setScene('testmap')
 
         let sign = new Sign(1500, 230, this.DataClass)
+        let movementTutorial = new ControllButtons(50, 100, 2)
+        let attackTutorial = new ControllButtons(900, 200, 2)
+        movementTutorial.scale = new ex.Vector(2, 2)
+        attackTutorial.scale = new ex.Vector(2, 2)
         this.add(sign)
 
+        attackTutorial.attackKey()
+        movementTutorial.arrowKeys()
+
+
         Resources.tiledMap.addTiledMapToScene(this)
+
+        this.add(movementTutorial)
+        this.add(attackTutorial)
 
         this.initializeBackground(Engine)
 
@@ -56,13 +79,16 @@ export class Testmap extends ex.Scene {
             this.leftWallCollider.kill()
             this.rightWallCollider.kill()
             this.sign.kill()
+            if(this.DataClass.getMultiplayer() && this.player2 != undefined || this.player2 != undefined) {
+                this.player2.kill()
+            }
         }
 
         const enemiesCanCollideWith = ex.CollisionGroup.collidesWith([
             this.playerGroup, // collide with players
         ])
-        const playersCanCollideWith = ex.CollisionGroup.collidesWith([
-            this.playerGroup, // collide with other players
+        this.playersCanCollideWith = ex.CollisionGroup.collidesWith([
+            // this.playerGroup, // collide with other players
             this.enemyGroup, // collide with enemies
         ])
 
@@ -79,7 +105,36 @@ export class Testmap extends ex.Scene {
             collisionType: ex.CollisionType.Fixed
           })
 
-        this.player = new Player(20, 200, this.DataClass, playersCanCollideWith)
+        this.p1Label = new ex.Label	({
+            pos: ex.vec(-6, -5),
+            text: "P1",
+            color: ex.Color.White,
+            font: new ex.Font({ size: 10 }),
+        })
+
+        this.p2Label = new ex.Label	({
+            pos: ex.vec(-6, -5),
+            text: "P2",
+            color: ex.Color.White,
+            font: new ex.Font({ size: 10 }),
+        })
+
+        this.player2 = new Player(50, 200, this.DataClass, true, 2, this.playersCanCollideWith)
+
+        if (this.DataClass.getMultiplayer()) {
+            this.player2.addChild(this.p2Label)
+            this.player = new Player(20, 200, this.DataClass, true, 1, this.playersCanCollideWith)
+            this.player.addChild(this.p1Label)
+            this.add(this.player2)
+        } else {
+            this.player = new Player(20, 200, this.DataClass, false, 1, this.playersCanCollideWith)
+            this.player2.addChild(this.p2Label)
+            this.player.addChild(this.p1Label)
+            this.p1Label.text = ""
+            this.add(this.player2)
+            this.player2.active = false
+        }
+
         this.enemy = new Enemy(900, 200, enemiesCanCollideWith)
         this.sign = new Sign(1500, 230, this.DataClass)
         this.camera.strategy.lockToActor(this.player)
@@ -135,6 +190,21 @@ export class Testmap extends ex.Scene {
                 this.trackplaying.play(this.muisicVolume).then(() => {
                     this.looping = true
                 })
+            }
+        }
+        if(!this.DataClass.getMultiplayer() && this.player2 != undefined) {
+            if(this.player2.active) {
+                this.player2.active = false
+                this.player.setPlayer(1, false)
+                this.p1Label.text = ""
+            }
+        }
+        if(this.DataClass.getMultiplayer() && this.player2 != undefined) {
+            if(this.player2.active == false) {
+                this.player2.active = true
+                this.add(this.player2)
+                this.player.setPlayer(1, true)
+                this.p1Label.text = "P1"
             }
         }
     }

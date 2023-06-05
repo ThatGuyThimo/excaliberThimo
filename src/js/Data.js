@@ -7,6 +7,7 @@ export class Data {
     playerXpos
     levels = ['testmap', 'level1', 'level2']
     currentLevel = 0
+    multiplayer = false
 
     setSFXvolume(value) {
         this.SFXvolume = parseFloat(value)
@@ -26,6 +27,10 @@ export class Data {
 
     setPlayerXpos(value) {
         this.playerXpos = value
+    }
+
+    setMultiplayer(value) {
+        this.multiplayer = value
     }
 
     getSFXvolume() {
@@ -54,5 +59,9 @@ export class Data {
 
     getCurrentLevel() {
         return this.currentLevel
+    }
+
+    getMultiplayer() {
+        return this.multiplayer
     }
 }
