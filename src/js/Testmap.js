@@ -5,6 +5,7 @@ import { Enemy } from "./Enemy.js"
 import { BackgroundClass } from "./Background.js"
 import { Sign } from "./Sign.js"
 import { ControllButtons } from "./ControllButtons.js"
+import { Hp } from "./Hp.js"
 
 export class Testmap extends ex.Scene {
 
@@ -13,6 +14,8 @@ export class Testmap extends ex.Scene {
     looping = false
     player
     player2
+    playerHP
+    player2HP
     p1Label
     enemy
     sign
@@ -123,9 +126,12 @@ export class Testmap extends ex.Scene {
 
         if (this.DataClass.getMultiplayer()) {
             this.player2.addChild(this.p2Label)
+            this.player2HP = new Hp(0, 0, this.DataClass, 2)
+            this.playerHP = new Hp(0, 0, this.DataClass, 1)
             this.player = new Player(20, 200, this.DataClass, true, 1, this.playersCanCollideWith)
             this.player.addChild(this.p1Label)
             this.add(this.player2)
+            // this.add(this.playerHP)
         } else {
             this.player = new Player(20, 200, this.DataClass, false, 1, this.playersCanCollideWith)
             this.player2.addChild(this.p2Label)

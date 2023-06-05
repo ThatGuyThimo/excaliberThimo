@@ -15,6 +15,7 @@ import jumptofallImageSrc from '../images/120x80_PNGSheets/_JumpFallInbetween.pn
 import attack1ImageSrc from '../images/120x80_PNGSheets/_Attack.png'
 import attack2ImageSrc from '../images/120x80_PNGSheets/_Attack2.png'
 import deathImageSrc from '../images/120x80_PNGSheets/_Death.png'
+import healthImageSrc from '../images/Heart&ManaUi.png'
 import signImageSrc from '../images/sign.png'
 import bgNightTownFrontImageSrc from '../images/Backgrounds/PNG/Night-Town/front.png'
 import bgNightTownMiddleImageSrc from '../images/Backgrounds/PNG/Night-Town/middle.png'
@@ -56,6 +57,7 @@ const Resources = {
     uibuttons: new ImageSource(uiImageSrc),
     buttons: new ImageSource(buttonsImageSrc),
     sign: new ImageSource(signImageSrc),
+    healthui: new ImageSource(healthImageSrc),
     trackoverworldinit: new Sound(overworldInitAudioSrc),
     trackoverworld1: new Sound(overworld1AudioSrc),
     trackgameover: new Sound(gameoverAudioSrc),
@@ -86,6 +88,7 @@ const ResourceLoader = new Loader([
         Resources.trackgameoverloop,
         Resources.playerhit,
         Resources.sign,
+        Resources.healthui,
         Resources.buttons,
         Resources.background[0],
         Resources.background[1],
