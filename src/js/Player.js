@@ -35,6 +35,9 @@ export class Player extends ex.Actor {
     }
 
     onInitialize(engine) {
+
+        this.DataClass.setPlayerHealth(this.player, this.health)
+
         // Create all the SpriteSheets
         let idleSheet = ex.SpriteSheet.fromImageSource({
             image: Resources.playeridle,
@@ -192,10 +195,45 @@ export class Player extends ex.Actor {
         } else {
             this.onGround = false
         }
-        if(this.onGround && !engine.input.keyboard.isHeld(ex.Input.Keys.D) && !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !engine.input.keyboard.isHeld(ex.Input.Keys.A) && !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft)) {
+        if(
+            this.onGround && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
+            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
+            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
+            this.player == 1 && 
+            !this.multiplayer ||
+            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
+            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) &&
+            this.player == 2 &&
+            this.multiplayer ||
+            !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
+            !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
+            this.player == 1 && 
+            this.multiplayer
+            ) {
+
             this.vel.x = 0
         }
-        if(this.crouching && !engine.input.keyboard.isHeld(ex.Input.Keys.S) && !engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown)) {
+        if(
+            this.crouching &&
+            !engine.input.keyboard.isHeld(ex.Input.Keys.S) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && 
+            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) &&
+            this.player == 1 && 
+            !this.multiplayer ||
+            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && 
+            this.player == 2 &&
+            this.multiplayer ||
+            this.player == 1 && 
+            this.multiplayer &&
+            !engine.input.keyboard.isHeld(ex.Input.Keys.S) && 
+            !engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown)
+            ) {
             this.crouching = false
         }
 
@@ -606,5 +644,6 @@ export class Player extends ex.Actor {
                 this.graphics.use(this.playerAnimations['idleAnim'])
             }, 800)
         }
+        this.DataClass.setPlayerHealth(this.player, this.health)
     }
 }

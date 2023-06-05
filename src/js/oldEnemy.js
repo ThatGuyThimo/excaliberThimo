@@ -6,45 +6,21 @@ export class Enemy extends ex.Actor {
     health = 5
     hit
     onGround
-    Sprites
-    Speeds
-    SpriteRange
 
-    /**
-     * 
-     * @param {Number} x 
-     * @param {Number} y 
-     * @param {Array} Sprites 
-     * @param {Array} Speeds [Numbers]
-     * @param {Array} SpriteRange [Vector]
-     */
-    constructor(x, y, Sprites, Speeds, SpriteRange, collider) {
+    constructor(x, y, collisionGroup) {
         super({ 
             x: x,
             y: y,
             name: 'enemy',
             collisionType: ex.CollisionType.Active,
-            collider: collider
-            // collider: ex.Shape.Box(20, 40)
+            // collisionGroup: collisionGroup,
+            collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(-5, 20))
         })
-        this.Sprites = Sprites
-        this.Speeds = Speeds
-        this.SpriteRange = SpriteRange
     }
 
     onInitialize(Engine) {
         let idleSheet = ex.SpriteSheet.fromImageSource({
-            image: this.Sprites[0],
-            grid: {
-                rows: 1,
-                columns: 10,
-                spriteWidth: 120,
-                spriteHeight: 80
-            }
-        })
-
-        let walkSheet = ex.SpriteSheet.fromImageSource({
-            image: this.Sprites[1],
+            image: Resources.playeridle,
             grid: {
                 rows: 1,
                 columns: 10,
@@ -54,7 +30,7 @@ export class Enemy extends ex.Actor {
         })
 
         let jumpSheet = ex.SpriteSheet.fromImageSource({
-            image: this.Sprites[2],
+            image: Resources.playerjump,
             grid: {
                 rows: 1,
                 columns: 3,
@@ -64,7 +40,7 @@ export class Enemy extends ex.Actor {
         })
 
         let deathAnim = ex.SpriteSheet.fromImageSource({
-            image: this.Sprites[3],
+            image: Resources.playerdeath,
             grid: {
                 rows: 1,
                 columns: 10,
@@ -73,13 +49,12 @@ export class Enemy extends ex.Actor {
             }
         })
 
-        let hitAnim = this.Sprites[4].toSprite()
+        let hitAnim = Resources.playerhit.toSprite()
 
-        this.enemyAnimations['Idle'] = ex.Animation.fromSpriteSheet(idleSheet, ex.range(this.SpriteRange[0].x, this.SpriteRange[0].y), this.Speeds[0]);
-        this.enemyAnimations['Walk'] = ex.Animation.fromSpriteSheet(walkSheet, ex.range(this.SpriteRange[1].x, this.SpriteRange[1].y), this.Speeds[1]);
-        this.enemyAnimations['Jump'] = ex.Animation.fromSpriteSheet(jumpSheet, ex.range(this.SpriteRange[2].x, this.SpriteRange[2].y), this.Speeds[2]);
-        this.enemyAnimations['Death'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(this.SpriteRange[3].x, this.SpriteRange[3].y), this.Speeds[3], ex.AnimationStrategy.Freeze);
-        this.enemyAnimations['Hit'] = hitAnim;
+        this.enemyAnimations['idleAnim'] = ex.Animation.fromSpriteSheet(idleSheet, ex.range(0, 9), 100);
+        this.enemyAnimations['jumpAnim'] = ex.Animation.fromSpriteSheet(jumpSheet, ex.range(0, 2), 50);
+        this.enemyAnimations['deathAnim'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(0, 9), 50, ex.AnimationStrategy.Freeze);
+        this.enemyAnimations['playerHit'] = hitAnim;
 
         this.on('collisionstart', (event) => {
             if (event.other._name == "attackbox" && !this.hit && this.health > 0) {
@@ -110,26 +85,26 @@ export class Enemy extends ex.Actor {
                 this.animPlaying = 0
                 switch(this.facing){
                     case "R":
-                        this.enemyAnimations['Idle'].flipHorizontal = false
+                        this.enemyAnimations['idleAnim'].flipHorizontal = false
                         break;
                     case "L":
-                        this.enemyAnimations['Idle'].flipHorizontal = true
+                        this.enemyAnimations['idleAnim'].flipHorizontal = true
                         break;
                 }
-                this.graphics.use(this.enemyAnimations['Idle'])
+                this.graphics.use(this.enemyAnimations['idleAnim'])
                 break;
                 case this.health <= 0 : // Death
                     switch(this.facing){
                         case "R":
-                            this.enemyAnimations['Death'].flipHorizontal = false
+                            this.enemyAnimations['deathAnim'].flipHorizontal = false
                             break;
                         case "L":
-                            this.enemyAnimations['Death'].flipHorizontal = true
+                            this.enemyAnimations['deathAnim'].flipHorizontal = true
                             break;
                     }
                     this.collider.set(ex.Shape.Box(30, 1, ex.Vector.Half, ex.vec(-25, 40)))
                     this.collisionType = ex.CollisionType.Prevent
-                    this.graphics.use(this.enemyAnimations['Death'])
+                    this.graphics.use(this.enemyAnimations['deathAnim'])
                     this.addTag('dead')
                 break;
         }
@@ -139,10 +114,10 @@ export class Enemy extends ex.Actor {
         if (this.health > 0) {
             switch(this.facing){
                 case "R":
-                    this.enemyAnimations['Hit'].flipHorizontal = false
+                    this.enemyAnimations['playerHit'].flipHorizontal = false
                     break;
                 case "L":
-                    this.enemyAnimations['Hit'].flipHorizontal = true
+                    this.enemyAnimations['playerHit'].flipHorizontal = true
                     break;
             }
             switch(side) {
@@ -159,13 +134,13 @@ export class Enemy extends ex.Actor {
                     // }, 100)
                     break;
             }
-            this.graphics.use(this.enemyAnimations['Hit'])
+            this.graphics.use(this.enemyAnimations['playerHit'])
             this.health -= ammount
             let sound = Resources.playerhitsounds[ex.randomIntInRange(0, 3)] 
             sound.play(this.SFXVolume)
             setTimeout(() => {
                 this.hit = false
-                this.graphics.use(this.enemyAnimations['Idle'])
+                this.graphics.use(this.enemyAnimations['idleAnim'])
             }, 400)
         }
     }

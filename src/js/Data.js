@@ -8,6 +8,7 @@ export class Data {
     levels = ['testmap', 'level1', 'level2']
     currentLevel = 0
     multiplayer = false
+    playerHealth = []
 
     setSFXvolume(value) {
         this.SFXvolume = parseFloat(value)
@@ -31,6 +32,10 @@ export class Data {
 
     setMultiplayer(value) {
         this.multiplayer = value
+    }
+
+    setPlayerHealth(player, health) {
+        this.playerHealth[player] = health
     }
 
     getSFXvolume() {
@@ -63,5 +68,9 @@ export class Data {
 
     getMultiplayer() {
         return this.multiplayer
+    }
+
+    getPlayerHealth(value) {
+        return this.playerHealth[value]
     }
 }
