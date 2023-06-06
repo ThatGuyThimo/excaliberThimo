@@ -221,6 +221,7 @@ export class Testmap extends ex.Scene {
         this.add(this.sign)
     }
 
+    // meerdere instanties van één class
     initializeBackground(Engine) {
         let BG1 = new BackgroundClass(-2, -400, -300, 4, 0.8, Resources.background[0], this.DataClass)
         let BG2 = new BackgroundClass(-3, -400, -300, 4, 0.6, Resources.background[1], this.DataClass)

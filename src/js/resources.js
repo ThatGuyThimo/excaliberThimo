@@ -48,9 +48,10 @@ import hit_1AudioSrc from '../sounds/01_Claw_01.wav'
 import hit_2AudioSrc from '../sounds/02_Claw_02.wav'
 import hit_3AudioSrc from '../sounds/03_Claw_03.wav'
 import hit_4AudioSrc from '../sounds/04_Claw_04.wav'
+import tiledmap from '../images/testingmap2.tmx'
 
 const Resources = {
-    tiledMap: new TiledMapResource("./src/images/testingmap2.tmx"),
+    tiledMap: new TiledMapResource(tiledmap),
     blackscreen: new ImageSource(blackscreenImageSrc),
     playeridle: new ImageSource(idleImageSrc),
     playerrun: new ImageSource(runImageSrc),
