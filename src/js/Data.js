@@ -9,6 +9,7 @@ export class Data {
     currentLevel = 0
     multiplayer = false
     playerHealth = []
+    score = 0
 
     setSFXvolume(value) {
         this.SFXvolume = parseFloat(value)
@@ -36,6 +37,14 @@ export class Data {
 
     setPlayerHealth(player, health) {
         this.playerHealth[player] = health
+    }
+
+    setScore(value) {
+        this.score = value
+    }
+
+    incrementScore() {
+        this.score = this.score + 1
     }
 
     getSFXvolume() {
@@ -72,5 +81,9 @@ export class Data {
 
     getPlayerHealth(value) {
         return this.playerHealth[value]
+    }
+
+    getScore(){
+        return this.score
     }
 }

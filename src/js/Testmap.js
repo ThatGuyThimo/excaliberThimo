@@ -8,6 +8,7 @@ import { BackgroundClass } from "./Background.js"
 import { Sign } from "./Sign.js"
 import { ControllButtons } from "./ControllButtons.js"
 import { Hp } from "./Hp.js"
+import { DeathScreen } from "./DeathScreen.js";
 
 export class Testmap extends ex.Scene {
 
@@ -20,6 +21,8 @@ export class Testmap extends ex.Scene {
     playerHP
     player2HP
     p1Label
+    scoreLabel
+    score
     enemy
     sign
     enemyGroup = ex.CollisionGroupManager.create('enemyGroup')
@@ -31,6 +34,8 @@ export class Testmap extends ex.Scene {
     leftWallCollider
     rightWallCollider
     movementTutorial
+    deathscreen
+    knight
 
     constructor(Dataclass){
         super({})
@@ -50,23 +55,45 @@ export class Testmap extends ex.Scene {
 
         let sign = new Sign(1500, 230, this.DataClass)
         this.movementTutorial = new ControllButtons(50, 100, 2)
-        // let attackTutorial = new ControllButtons(900, 200, 2)
         this.movementTutorial.scale = new ex.Vector(2, 2)
-        // attackTutorial.scale = new ex.Vector(2, 2)
         this.add(sign)
 
-        // attackTutorial.attackKey()
-        // this.movementTutorial.arrowKeys()
 
+        const scoreLabel = class Scorelabel extends ex.ScreenElement{
+
+            text
+
+            constructor(){
+                super({
+                    x: 30,
+                    y: 15,
+                    width: 10,
+                    height: 12,
+                })
+                this.text = new ex.Text({
+                    pos: ex.vec(30, 15),
+                    text: "Kills: 0",
+                    color: ex.Color.White,
+                    font: new ex.Font({ size: 15 }),
+                })
+                this.graphics.show(this.text)
+            }
+
+            updateText(value) {
+                this.text.text = value
+            }
+        } 
+        this.scoreLabel = new scoreLabel()
+        this.add(this.scoreLabel)
 
         Resources.tiledMap.addTiledMapToScene(this)
 
+
         this.add(this.movementTutorial)
-        // this.add(attackTutorial)
 
         this.initializeBackground(Engine)
 
-        this.initializeActors()
+        this.initializeActors(Engine)
 
         if(this.muisicVolume != 0) {
             this.trackplaying = Resources.trackoverworldinit
@@ -91,26 +118,29 @@ export class Testmap extends ex.Scene {
         });
     }
 
-    initializeActors() {
+    initializeActors(Engine) {
         if(this.DataClass.getRestart()) {
+            this.DataClass.setScore(0)
             this.DataClass.setRestart(false)
             this.player.kill()
             this.enemy.kill()
             this.leftWallCollider.kill()
             this.rightWallCollider.kill()
             this.sign.kill()
+            this.knight.kill()
             if(this.DataClass.getMultiplayer() && this.player2 != undefined || this.player2 != undefined) {
                 this.player2.kill()
             }
+            this.deathscreen.kill()
         }
 
-        const enemiesCanCollideWith = ex.CollisionGroup.collidesWith([
-            this.playerGroup, // collide with players
-        ])
         this.playersCanCollideWith = ex.CollisionGroup.collidesWith([
             // this.playerGroup, // collide with other players
             this.enemyGroup, // collide with enemies
         ])
+
+        this.deathscreen = new DeathScreen(220, 200, 3)
+        this.deathscreen.scale = new ex.Vector(3, 3)
 
         this.leftWallCollider = new ex.Actor({
             pos: ex.vec(-1, 200),
@@ -152,11 +182,11 @@ export class Testmap extends ex.Scene {
         this.p2Label.z = 2
         if (this.DataClass.getMultiplayer()) {
             this.player2.addChild(this.p2Label)
-            this.player = new Player(20, 200, this.DataClass, true, 1, this.playersCanCollideWith)
+            this.player = new Player(22, 210, this.DataClass, true, 1, this.playersCanCollideWith)
             this.player.addChild(this.p1Label)
             this.add(this.player2)
         } else {
-            this.player = new Player(20, 200, this.DataClass, false, 1, this.playersCanCollideWith)
+            this.player = new Player(22, 210, this.DataClass, false, 1, this.playersCanCollideWith)
             this.player2.addChild(this.p2Label)
             this.player.addChild(this.p1Label)
             this.p1Label.text = ""
@@ -166,12 +196,12 @@ export class Testmap extends ex.Scene {
 
         let collection = new EnemyCollection()
 
-        this.enemy = collection.enemyKnight(new ex.Vector(900, 200))
-        // this.enemy = new Enemy(900, 200, enemiesCanCollideWith)
-        // this.enemy = new Enemy(900, 200, Resources.enemyknight, [100, 50, 50, 50], [ex.vec(0, 9), ex.vec(0, 9), ex.vec(0, 2), ex.vec(0, 9)], ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(-5, 20)))
+        this.enemy = collection.enemySkeleton(this.DataClass, new ex.Vector(880, 260))
+
+        this.knight = collection.enemyKnight(this.DataClass, new ex.Vector(1400, 200))
+
         this.sign = new Sign(1500, 230, this.DataClass)
         this.camera.strategy.lockToActor(this.player)
-        // this.camera.strategy.radiusAroundActor(this.Player, 100)
 
         let boundingBox = new ex.BoundingBox(
             0,
@@ -187,6 +217,7 @@ export class Testmap extends ex.Scene {
         this.add(this.rightWallCollider)
         this.add(this.player)
         this.add(this.enemy)
+        this.add(this.knight)
         this.add(this.sign)
     }
 
@@ -212,6 +243,11 @@ export class Testmap extends ex.Scene {
     onPreUpdate(Engine) {
         this.trackplaying.volume = this.muisicVolume
 
+        if(this.score != this.DataClass.getScore()) {
+            this.score = this.DataClass.getScore()
+            this.scoreLabel.updateText(`Kills: ${this.score}`)
+        }
+
         if(this.DataClass.getMultiplayer() && this.player.getHealth() <= 0 && !this.cameraSwitched) {
             console.log('switched')
             let boundingBox = new ex.BoundingBox(
@@ -223,6 +259,11 @@ export class Testmap extends ex.Scene {
               this.camera.strategy.lockToActor(this.player2)
               this.camera.strategy.limitCameraBounds(boundingBox)
         }
+
+        if(this.DataClass.getMultiplayer() && this.player.getHealth() <= 0 && this.player2.getHealth() <= 0 || !this.DataClass.getMultiplayer() && this.player.getHealth() <= 0) {
+            this.add(this.deathscreen)
+        }
+        
 
         if(this.muisicVolume != 0) {
             if (this.player.getHealth() <= 0 && this.dead == false && !this.DataClass.getMultiplayer() || this.DataClass.getMultiplayer() && this.player.getHealth() <= 0 && this.player2.getHealth() <= 0 && this.dead == false) {

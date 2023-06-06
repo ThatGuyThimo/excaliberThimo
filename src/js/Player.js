@@ -1,5 +1,7 @@
 import * as ex from "excalibur"
 import { Resources } from "./resources"
+
+// jouw eige classes gebruiken inheritance om over te erven van excalibur
 export class Player extends ex.Actor {
 
     onGround = true

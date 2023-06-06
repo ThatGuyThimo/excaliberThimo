@@ -1,6 +1,7 @@
 import { ImageSource, Sound, Resource, Loader} from 'excalibur'
 import { TiledMapResource } from '@excaliburjs/plugin-tiled'
 import idleImageSrc from '../images/120x80_PNGSheets/_idle.png'
+import blackscreenImageSrc from '../images/blackscreen.png'
 import crouchImageSrc from '../images/120x80_PNGSheets/_Crouch.png'
 import crouchWalkImageSrc from '../images/120x80_PNGSheets/_CrouchWalk.png'
 import crouchTransitionImageSrc from '../images/120x80_PNGSheets/_CrouchTransition.png'
@@ -17,6 +18,10 @@ import attack2ImageSrc from '../images/120x80_PNGSheets/_Attack2.png'
 import deathImageSrc from '../images/120x80_PNGSheets/_Death.png'
 import healthImageSrc from '../images/Heart&ManaUi.png'
 import signImageSrc from '../images/sign.png'
+import idleSkeletonImageSrc from '../images/Monsters/Skeleton/Idle.png'
+import runSkeletonImageSrc from '../images/Monsters/Skeleton/Walk.png'
+import deathSkeletonImageSrc from '../images/Monsters/Skeleton/Death.png'
+import damageSkeletonImageSrc from '../images/Monsters/Skeleton/Take Hit.png'
 import bgNightTownFrontImageSrc from '../images/Backgrounds/PNG/Night-Town/front.png'
 import bgNightTownMiddleImageSrc from '../images/Backgrounds/PNG/Night-Town/middle.png'
 import bgNightTownBackImageSrc from '../images/Backgrounds/PNG/Night-Town/back.png'
@@ -46,6 +51,7 @@ import hit_4AudioSrc from '../sounds/04_Claw_04.wav'
 
 const Resources = {
     tiledMap: new TiledMapResource("./src/images/testingmap2.tmx"),
+    blackscreen: new ImageSource(blackscreenImageSrc),
     playeridle: new ImageSource(idleImageSrc),
     playerrun: new ImageSource(runImageSrc),
     playerjump: new ImageSource(jumpImageSrc),
@@ -62,7 +68,8 @@ const Resources = {
     trackoverworld1: new Sound(overworld1AudioSrc),
     trackgameover: new Sound(gameoverAudioSrc),
     trackgameoverloop: new Sound(gameoverLoopAudioSrc),
-    enemyknight: [new ImageSource(idleImageSrc), new ImageSource(runImageSrc), new ImageSource(jumpImageSrc), new ImageSource(deathImageSrc), new ImageSource(damageImageSrc),],
+    enemyknight: [new ImageSource(idleImageSrc), new ImageSource(runImageSrc), new ImageSource(jumpImageSrc), new ImageSource(deathImageSrc), [new ImageSource(damageImageSrc), true],],
+    enemyskeleton: [new ImageSource(idleSkeletonImageSrc), new ImageSource(runSkeletonImageSrc), new ImageSource(idleSkeletonImageSrc), new ImageSource(deathSkeletonImageSrc), [new ImageSource(damageSkeletonImageSrc), false],],
     background: [new ImageSource(bgNightTownFrontImageSrc), new ImageSource(bgNightTownMiddleImageSrc), new ImageSource(bgNightTownBackImageSrc)],
     attack1sounds: [new Sound(attack1_1AudioSrc), new Sound(attack1_2AudioSrc), new Sound(attack1_3AudioSrc)],
     attack2sounds: [new Sound(attack2_1AudioSrc), new Sound(attack2_2AudioSrc), new Sound(attack2_3AudioSrc)],
@@ -91,11 +98,17 @@ const ResourceLoader = new Loader([
         Resources.sign,
         Resources.healthui,
         Resources.buttons,
+        Resources.blackscreen,
         Resources.enemyknight[0],
         Resources.enemyknight[1],
         Resources.enemyknight[2],
         Resources.enemyknight[3],
-        Resources.enemyknight[4],
+        Resources.enemyknight[4][0],
+        Resources.enemyskeleton[0],
+        Resources.enemyskeleton[1],
+        Resources.enemyskeleton[2],
+        Resources.enemyskeleton[3],
+        Resources.enemyskeleton[4][0],
         Resources.background[0],
         Resources.background[1],
         Resources.background[2],
