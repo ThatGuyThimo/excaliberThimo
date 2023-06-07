@@ -24,7 +24,7 @@ export class Game extends ex.Engine {
         maxFps: 60,
       });
       // this.showDebug(true)
-      // const devtool = new DevTool(this);
+      const devtool = new DevTool(this);
       ex.Physics.acc = new ex.vec(0, 800)
       this.start(ResourceLoader).then(() => this.startGame());
       this.DataClass = new Data()

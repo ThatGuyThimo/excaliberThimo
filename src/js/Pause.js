@@ -9,6 +9,7 @@ export class PauseScreen extends ex.Scene {
     menuButton
     lastScene
     DataClass
+    soundplayed
 
     constructor(Dataclass){
         super({})
@@ -39,19 +40,19 @@ export class PauseScreen extends ex.Scene {
             }
         });
         
-        this.settingsButton = new Button(16, 16, 50, 75);
+        this.settingsButton = new Button(16, 16, 50, 75, this.DataClass);
         this.settingsButton.setText('Settings', 12);
         this.settingsButton.setImages(uiButtonsSpriteSheet.sprites[116], uiButtonsSpriteSheet.sprites[2]);
 
-        this.restartButton = new Button(16, 16, 50, 100);
+        this.restartButton = new Button(16, 16, 50, 100, this.DataClass);
         this.restartButton.setText('Restart', 12);
         this.restartButton.setImages(uiButtonsSpriteSheet.sprites[117], uiButtonsSpriteSheet.sprites[3]);
 
-        this.menuButton = new Button(16, 16, 50, 125);
+        this.menuButton = new Button(16, 16, 50, 125, this.DataClass);
         this.menuButton.setText('Main menu', 12);
         this.menuButton.setImages(uiButtonsSpriteSheet.sprites[130], uiButtonsSpriteSheet.sprites[16]);
 
-        this.backButton = new Button(16, 16, 50, 50);
+        this.backButton = new Button(16, 16, 50, 50, this.DataClass);
         this.backButton.setText('Return to game', 12);
         this.backButton.setImages(uiButtonsSpriteSheet.sprites[117], uiButtonsSpriteSheet.sprites[3]);
         
@@ -62,14 +63,33 @@ export class PauseScreen extends ex.Scene {
         
     }
 
-    onPreUpdate(Engine) {
+    onActivate(){
+        let sound = Resources.pausesound
+        sound.play(this.SFXVolume)
+        setTimeout(() => {
+            this.soundplayed = false
+        }, 200)
+    }
 
-        if (Engine.input.keyboard.wasPressed(ex.Input.Keys.Esc)){
-            Engine.goToScene(this.lastScene)
-        }
+    onPreUpdate(Engine) {
+        Engine.input.keyboard.on("press", (KeyEvent) => {
+            if(KeyEvent.key == "Escape") {
+                if(!this.soundplayed) {
+                    this.soundplayed = true
+                    let sound = Resources.unpausesound
+                    sound.play(this.SFXVolume)
+                    Engine.goToScene(this.lastScene)
+                }
+            }
+        });
         Engine.input.gamepads.at(0).on('button', (event) => {
             if(event.button === ex.Input.Buttons.Select) {
-                Engine.goToScene(this.lastScene)
+                if(!this.soundplayed) {
+                    this.soundplayed = true
+                    let sound = Resources.unpausesound
+                    sound.play(this.SFXVolume)
+                    Engine.goToScene(this.lastScene)
+                }
             }
         })
         if(this.settingsButton.isClicked()) {

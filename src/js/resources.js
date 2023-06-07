@@ -29,6 +29,12 @@ import overworld1AudioSrc from '../sounds/tracks/02_1_titles_LOOP.mp3'
 import overworldInitAudioSrc from '../sounds/tracks/titles_INITIAL.mp3'
 import gameoverAudioSrc from '../sounds/tracks/game_over_INITIAL.mp3'
 import gameoverLoopAudioSrc from '../sounds/tracks/game_over_LOOP.mp3'
+import pauseAudioSrc from '../sounds/090_Pause_02.wav'
+import unpauseAudioSrc from '../sounds/096_Unpause_02.wav'
+import uiHoverAudioSrc from '../sounds/001_Hover_01.wav'
+import bowHit1AudioSrc from '../sounds/47_Bow_Hit_01.wav'
+import bowHit2AudioSrc from '../sounds/48_Bow_Hit_02.wav'
+import bowHit3AudioSrc from '../sounds/49_Bow_Hit_01.wav'
 import attack1_1AudioSrc from '../sounds/28_swoosh_01.wav'
 import attack1_2AudioSrc from '../sounds/29_swoosh_02.wav'
 import attack1_3AudioSrc from '../sounds/30_swoosh_03.wav'
@@ -69,11 +75,15 @@ const Resources = {
     trackoverworld1: new Sound(overworld1AudioSrc),
     trackgameover: new Sound(gameoverAudioSrc),
     trackgameoverloop: new Sound(gameoverLoopAudioSrc),
+    pausesound: new Sound(pauseAudioSrc),
+    unpausesound: new Sound(unpauseAudioSrc),
+    uihoversound: new Sound(uiHoverAudioSrc),
     enemyknight: [new ImageSource(idleImageSrc), new ImageSource(runImageSrc), new ImageSource(jumpImageSrc), new ImageSource(deathImageSrc), [new ImageSource(damageImageSrc), true],],
     enemyskeleton: [new ImageSource(idleSkeletonImageSrc), new ImageSource(runSkeletonImageSrc), new ImageSource(idleSkeletonImageSrc), new ImageSource(deathSkeletonImageSrc), [new ImageSource(damageSkeletonImageSrc), false],],
     background: [new ImageSource(bgNightTownFrontImageSrc), new ImageSource(bgNightTownMiddleImageSrc), new ImageSource(bgNightTownBackImageSrc)],
     attack1sounds: [new Sound(attack1_1AudioSrc), new Sound(attack1_2AudioSrc), new Sound(attack1_3AudioSrc)],
     attack2sounds: [new Sound(attack2_1AudioSrc), new Sound(attack2_2AudioSrc), new Sound(attack2_3AudioSrc)],
+    bowhitsounds: [new Sound(bowHit1AudioSrc), new Sound(bowHit2AudioSrc), new Sound(bowHit3AudioSrc)],
     jumpingsounds: [new Sound(jump_1AudioSrc), new Sound(jump_2AudioSrc), new Sound(jump_3AudioSrc)],
     landingsounds: [new Sound(landing_1AudioSrc), new Sound(landing_2AudioSrc), new Sound(landing_3AudioSrc)],
     crouchingsounds: [new Sound(crouch_1AudioSrc), new Sound(crouch_2AudioSrc), new Sound(crouch_3AudioSrc)],
@@ -117,6 +127,12 @@ const ResourceLoader = new Loader([
         Resources.playerhitsounds[1],
         Resources.playerhitsounds[2],
         Resources.playerhitsounds[3],
+        Resources.bowhitsounds[0],
+        Resources.bowhitsounds[1],
+        Resources.bowhitsounds[2],
+        Resources.pausesound,
+        Resources.unpausesound,
+        Resources.uihoversound,
         Resources.attack1sounds[0], 
         Resources.attack1sounds[1], 
         Resources.attack1sounds[2], 

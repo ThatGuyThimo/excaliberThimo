@@ -1,4 +1,6 @@
 import * as ex from 'excalibur'
+import { Resources } from './resources' 
+
 
 export class CheckBox extends ex.ScreenElement {
     buttonSprite
@@ -8,15 +10,16 @@ export class CheckBox extends ex.ScreenElement {
     clicked = false
     isActive = false
     pos
+    DataClass
 
-  constructor(w, h, x, y) {
+  constructor(w, h, x, y, DataClass) {
     super({
       x: x,
       y: y,
       width: w,
       height: h,
     })
-
+    this.DataClass = DataClass
     this.pos = new ex.Vector(x, y)
   }
 
@@ -34,6 +37,8 @@ export class CheckBox extends ex.ScreenElement {
     
     this.addChild(label)
 
+    let sound = Resources.uihoversound
+
     this.on('pointerup', () => {
         this.clicked = true
       if (this.isActive) {
@@ -41,6 +46,9 @@ export class CheckBox extends ex.ScreenElement {
       } else {
         this.isActive = true
       }
+    })
+    this.on('pointerenter', () => {
+      sound.play(this.DataClass.getSFXvolume())
     })
   }
 

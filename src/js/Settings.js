@@ -39,11 +39,11 @@ export class Settings extends ex.Scene {
 
         this.SFXVolumeSlider = new Slider(100, 115, 'SFX volume')
         this.MuisicVolumeSlider = new Slider(100, 145, 'Muisic volume')
-        this.backButton = new Button(16, 16, 50, 50)
+        this.backButton = new Button(16, 16, 50, 50, this.DataClass)
         this.backButton.setText('Back', 12)
         this.backButton.setImages(uiButtonsSpriteSheet.sprites[117], uiButtonsSpriteSheet.sprites[3])
 
-        this.multiplayerButton = new CheckBox(16, 16, 50, 160)
+        this.multiplayerButton = new CheckBox(16, 16, 50, 160, this.DataClass)
         this.multiplayerButton.setText('Multiplayer', 12)
         this.multiplayerButton.setImages(uiButtonsSpriteSheet.sprites[108], uiButtonsSpriteSheet.sprites[125])
         

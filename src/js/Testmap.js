@@ -36,6 +36,7 @@ export class Testmap extends ex.Scene {
     movementTutorial
     deathscreen
     knight
+    paused = false
 
     constructor(Dataclass){
         super({})
@@ -98,10 +99,7 @@ export class Testmap extends ex.Scene {
         if(this.muisicVolume != 0) {
             this.trackplaying = Resources.trackoverworldinit
             this.trackplaying.play(this.muisicVolume)
-            // .then(() => {
-            //     this.trackplaying = Resources.trackoverworld1
-            //         this.looping = true
-            // })
+            this.looping = true
         }
         
         Engine.input.gamepads.at(0).on('button', (event) => {
@@ -110,11 +108,25 @@ export class Testmap extends ex.Scene {
             } else {
                 this.movementTutorial.switchInput(0)
             }
+            if(event.button === ex.Input.Buttons.Select) {
+                if(!this.paused) {
+                    this.paused = true
+                    this.trackplaying.pause()
+                    Engine.goToScene('pausescreen')
+                }
+            }
         })
         Engine.input.keyboard.on("press", (KeyEvent) => {
             if(!this.DataClass.getMultiplayer()) {
                 this.movementTutorial.switchInput(0)
                 }
+            if(KeyEvent.key == "Escape") {
+                if(!this.paused) {
+                    this.paused = true
+                    this.trackplaying.pause()
+                    Engine.goToScene('pausescreen')
+                }
+            }
         });
     }
 
@@ -128,6 +140,12 @@ export class Testmap extends ex.Scene {
             this.rightWallCollider.kill()
             this.sign.kill()
             this.knight.kill()
+            this.dead = false
+            this.trackplaying.stop()
+            setTimeout(() => {
+                this.trackplaying = Resources.trackoverworldinit
+                // this.trackplaying.play()
+            },100)
             if(this.DataClass.getMultiplayer() && this.player2 != undefined || this.player2 != undefined) {
                 this.player2.kill()
             }
@@ -139,7 +157,7 @@ export class Testmap extends ex.Scene {
             this.enemyGroup, // collide with enemies
         ])
 
-        this.deathscreen = new DeathScreen(220, 200, 3)
+        this.deathscreen = new DeathScreen(250, 200, 3)
         this.deathscreen.scale = new ex.Vector(3, 3)
 
         this.leftWallCollider = new ex.Actor({
@@ -239,10 +257,17 @@ export class Testmap extends ex.Scene {
         if(this.DataClass.getRestart()) {
             this.initializeActors()
         }
+        this.trackplaying.play()
+        setTimeout(() => {
+            this.paused = false
+        }, 200)
     }
 
     onPreUpdate(Engine) {
-        this.trackplaying.volume = this.muisicVolume
+
+        if(this.trackplaying.isPlaying()){
+            this.trackplaying.volume = this.muisicVolume
+        }
 
         if(this.score != this.DataClass.getScore()) {
             this.score = this.DataClass.getScore()
@@ -269,18 +294,40 @@ export class Testmap extends ex.Scene {
         if(this.muisicVolume != 0) {
             if (this.player.getHealth() <= 0 && this.dead == false && !this.DataClass.getMultiplayer() || this.DataClass.getMultiplayer() && this.player.getHealth() <= 0 && this.player2.getHealth() <= 0 && this.dead == false) {
                 this.trackplaying.stop()
-                Resources.trackgameover.play(this.muisicVolume).then(()=> {
-                    this.trackplaying = Resources.trackgameoverloop
-                        this.looping = true
-                })
+                setTimeout(()=> {
+                    this.trackplaying = Resources.trackgameover
+                    this.trackplaying.play(this.muisicVolume)
+                    this.looping = true
+                }, 200)
                 this.dead = true
             }
-            if (this.looping) {
-                this.looping = false
-                this.trackplaying.play(this.muisicVolume).then(() => {
-                    this.looping = true
-                })
+            if(Resources.trackoverworldinit.getPlaybackPosition() +0.2 >= Resources.trackoverworldinit.getTotalPlaybackDuration()){
+                this.looping = true
             }
+            // console.log(this.trackplaying.getPlaybackPosition(), this.trackplaying.getTotalPlaybackDuration() )
+            if(this.trackplaying.getPlaybackPosition() +0.2 >= this.trackplaying.getTotalPlaybackDuration() && this.looping ){
+                if(this.dead) {
+                    this.trackplaying.stop()
+                    this.trackplaying = Resources.trackgameoverloop
+                    setTimeout(()=> {
+                        this.trackplaying.stop()
+                        this.trackplaying.play(this.muisicVolume)
+                    },200)
+                } else {
+                    this.trackplaying.stop()
+                    this.trackplaying = Resources.trackoverworld1
+                    setTimeout(()=> {
+                        this.trackplaying.stop()
+                        this.trackplaying.play(this.muisicVolume)
+                    },200)
+                }
+            }
+            // if (this.looping) {
+            //     this.looping = false
+            //     this.trackplaying.play(this.muisicVolume).then(() => {
+            //         this.looping = true
+            //     })
+            // }
         }
         if(!this.DataClass.getMultiplayer() && this.player2 != undefined) {
             if(this.player2.active) {

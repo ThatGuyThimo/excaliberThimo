@@ -485,9 +485,6 @@ export class Player extends ex.Actor {
             this.attacking += 1
             this.attack(this.attacking)
         }
-        if (engine.input.keyboard.wasPressed(ex.Input.Keys.Escape) && this.player == 1){
-            engine.goToScene('pausescreen')
-        }
 
         //controller once input
 
@@ -507,9 +504,6 @@ export class Player extends ex.Actor {
                         this.attacked = false
                     }, 10)
                 }
-            }
-            if(event.button === ex.Input.Buttons.Select) {
-                engine.goToScene('pausescreen')
             }
         })
             
